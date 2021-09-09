@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "chopstickscode"
+version = "0.1.0"
+description = ""
+authors = ["Jacob Root <otis@otisroot.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.10"
+numpy = "^1.21.2"
+sympy = "^1.8"
+scipy = "^1.7.1"
+
+[tool.poetry.dev-dependencies]
+black = {version = "^21.8b0", allow-prereleases = true}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
