@@ -306,7 +306,7 @@ class Game_Graphics:
         #   the erase obj function later
         return [rect, label]
 
-    def click_button(self, p1y, p2y, click_lists):
+    def click_button(self, p1y, p2y, click_lists, attack=False):
         """
         General method that recognizes clicking of buttons.
         The p1y and p2y are the y coordinates of all the buttons made
@@ -341,34 +341,65 @@ class Game_Graphics:
 
         # The y coordinates of the buttons drawn do not vary, so the if statement at the
         #   top makes sure what is being clicked is within one range of y for all buttons.
-        if p1y <= p.getY() <= p2y:
+        if attack:
+            pass
+            if p1y <= p.getY() <= p2y:
 
-            # this part actually does the recognizing of the clicks
-            # the latter part of the if statements make sure that only the buttons
-            #   that are currently drawn on the window can be clicked.
-            # the values return essentially tell the computer what number button the
-            #   player clicked
-            if 50 <= p.getX() <= 125 and (0 in click_lists):
-                x = 0
-            elif 175 <= p.getX() <= 250 and (1 in click_lists):
-                x = 1
+                # this part actually does the recognizing of the clicks
+                # the latter part of the if statements make sure that only the buttons
+                #   that are currently drawn on the window can be clicked.
+                # the values return essentially tell the computer what number button the
+                #   player clicked
+                if 50 <= p.getX() <= 125 and (3 in click_lists):
+                    x = 3
+                elif 175 <= p.getX() <= 250 and (2 in click_lists):
+                    x = 2
 
-            elif 300 <= p.getX() <= 375 and (2 in click_lists):
-                x = 2
+                elif 300 <= p.getX() <= 375 and (1 in click_lists):
+                    x = 1
 
-            elif 425 <= p.getX() <= 500 and (3 in click_lists):
-                x = 3
-            elif 550 <= p.getX() <= 625 and (4 in click_lists):
-                x = 4
+                elif 425 <= p.getX() <= 500 and (0 in click_lists):
+                    x = 0
+                elif 550 <= p.getX() <= 625 and (4 in click_lists):
+                    x = 4
+                else:
+                    # if player clicks outside of button, print instruction
+                    self.dont_click()
+                    return self.click_button(100, 150, click_lists)
+
             else:
                 # if player clicks outside of button, print instruction
                 self.dont_click()
                 return self.click_button(100, 150, click_lists)
-
         else:
-            # if player clicks outside of button, print instruction
-            self.dont_click()
-            return self.click_button(100, 150, click_lists)
+            if p1y <= p.getY() <= p2y:
+
+                # this part actually does the recognizing of the clicks
+                # the latter part of the if statements make sure that only the buttons
+                #   that are currently drawn on the window can be clicked.
+                # the values return essentially tell the computer what number button the
+                #   player clicked
+                if 50 <= p.getX() <= 125 and (0 in click_lists):
+                    x = 0
+                elif 175 <= p.getX() <= 250 and (1 in click_lists):
+                    x = 1
+
+                elif 300 <= p.getX() <= 375 and (2 in click_lists):
+                    x = 2
+
+                elif 425 <= p.getX() <= 500 and (3 in click_lists):
+                    x = 3
+                elif 550 <= p.getX() <= 625 and (4 in click_lists):
+                    x = 4
+                else:
+                    # if player clicks outside of button, print instruction
+                    self.dont_click()
+                    return self.click_button(100, 150, click_lists)
+
+            else:
+                # if player clicks outside of button, print instruction
+                self.dont_click()
+                return self.click_button(100, 150, click_lists)
 
         return x
 
@@ -399,27 +430,27 @@ class Game_Graphics:
         if p1_r > 0:
             if p2_r > 0:
                 self.attack0 = self.get_button(
-                    50, 100, 125, 150, "Attack Right \n w/ my Right"
+                    425, 100, 500, 150, "Attack Right \n w/ my Right"
                 )
                 lists.append(self.attack0)
                 click_list1.append(0)
 
             if p2_l > 0:
                 self.attack1 = self.get_button(
-                    175, 100, 250, 150, "Attack Left \n w/ my Right"
+                    300, 100, 375, 150, "Attack Left \n w/ my Right"
                 )
                 lists.append(self.attack1)
                 click_list1.append(1)
         if p1_l > 0:
             if p2_r > 0:
                 self.attack2 = self.get_button(
-                    300, 100, 375, 150, "Attack Right \n w/ my Left"
+                    175, 100, 250, 150, "Attack Right \n w/ my Left"
                 )
                 lists.append(self.attack2)
                 click_list1.append(2)
             if p2_l > 0:
                 attack3 = self.get_button(
-                    425, 100, 500, 150, "Attack Left \n w/ my Left"
+                    50, 100, 125, 150, "Attack Left \n w/ my Left"
                 )
                 lists.append(attack3)
                 click_list1.append(3)
@@ -429,7 +460,7 @@ class Game_Graphics:
             click_list1.append(4)
 
         # recognizes clicking of one the buttons by the player
-        attack = self.click_button(100, 150, click_list1)
+        attack = self.click_button(100, 150, click_list1, attack=True)
 
         # erases buttons drawn after click using method written below
         self.erase_button(lists)
