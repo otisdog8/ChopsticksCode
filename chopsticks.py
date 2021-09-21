@@ -81,12 +81,12 @@ class Hand:
     def add_toR(self, number3):
         """Add said number, number3, of fingers to the right hand"""
 
-        self.right_finger = self.right_finger + number3
+        self.right_finger = (self.right_finger + number3) % 5
 
     def add_toL(self, number4):
         """Add said number, number4, of fingers to the left hand"""
 
-        self.left_finger = self.left_finger + number4
+        self.left_finger = (self.left_finger + number4) % 5
 
     def fist(self):
         """
@@ -630,10 +630,24 @@ class A_chopsticks:
         p2r = max(p2.get_L(), p2.get_R())
 
         newpos = self.solver.move([p1l, p1r, p2l, p2r])
-        p1.left_finger = newpos[0]
-        p1.right_finger = newpos[1]
-        p2.left_finger = newpos[2]
-        p2.right_finger = newpos[3]
+        if newpos[2] != p2l:
+            text = "The computer switched"
+            p2.left_finger = newpos[2]
+            p2.right_finger = newpos[3]
+        else:
+            text = "The computer hit"
+            if p1l in newpos[0:2]:
+                accurate = p1l == p1.get_L()
+                p1.left_finger = p1l
+                p1.right_finger = newpos[(newpos[0:2].index(p1.left_finger) + 1) % 2]
+                if not accurate:
+                    p1.left_finger, p1.right_finger = p1.right_finger, p1.left_finger
+            else:
+                accurate = p1r == p1.get_R()
+                p1.right_finger = p1r
+                p1.left_finger = newpos[(newpos[0:2].index(p1.right_finger) + 1) % 2]
+                if not accurate:
+                    p1.left_finger, p1.right_finger = p1.right_finger, p1.left_finger
         # various moves the computer should take depending on the current situation.
         #   to sum it up, when available, always bring back the 'dead' hand through the
         #   switch move.  Then attack whatever hand has 4 fingers.  Then attack the left
