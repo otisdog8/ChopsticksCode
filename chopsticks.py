@@ -30,6 +30,8 @@ import time
 
 from chopstickSolverClass import ChopstickComputer
 
+import sys
+
 
 class Hand:
     """
@@ -784,7 +786,10 @@ def main():
     p1 = Hand(1, 1)
     p2 = Hand(1, 1)
     game_g = Game_Graphics()
-    game_g.introduction()
+    if len(sys.argv) > 1:
+        pass
+    else:
+        game_g.introduction()
     g = A_chopsticks(game_g, p1, p2)
 
 
