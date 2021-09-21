@@ -660,7 +660,7 @@ class A_chopsticks:
 
         # delays the window from erasing info shown by comp_dec and
         #   drawing the next sequence of actions
-        time.sleep(3.2)
+        time.sleep(1)
 
         # prints to command line for reference
         print(text)
