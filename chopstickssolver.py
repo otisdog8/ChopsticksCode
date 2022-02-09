@@ -13,18 +13,17 @@ class Position:
         self.parents = []
         self.children = []
         self.initialized = False
-        self.distance = 100  # added this later to prevent looping
+        self.distance = 100  # This variable denotes the distance from an absolutely won position (where one player is dead) to prevent looping
         if sum(self.position[0:2]) == 0:
             self.won = False
             self.distance = 0
         if sum(self.position[2:4]) == 0:
             self.won = True
             self.distance = 0
-        self.rationalmoves = []
         self.blunderscore = 0
 
     def getValidPositions(self):
-        # Make all possible things
+        # Moves using the first pair of hands if the first player, or the 2nd pair of hands if otherwise
         offset = 0 if self.turn else 2
         # hits
         possibilities = set()
@@ -85,13 +84,6 @@ class Position:
                 pass
             else:
                 child.recursivelyGenerateChildren()
-
-    def calculateRationalMoves(self):
-        for child in self.children:
-            if child.won == (not self.turn):
-                pass
-            else:
-                self.rationalmoves.append(child)
 
     def __str__(self):
         string = ""
