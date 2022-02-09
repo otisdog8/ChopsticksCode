@@ -1,6 +1,8 @@
 from collections import deque
+from copy import deepcopy
 import random
 from statistics import mean
+from sys import setrecursionlimit
 import numpy as np
 import scipy.linalg as la
 
@@ -94,7 +96,8 @@ class Position:
         string += "1" if self.turn else "2"
         return string
 
-def gengraph(damping):
+setrecursionlimit(1000000)
+def gengraph(damping, skip=True):
     cache = {}
     initial = Position([1, 1, 1, 1], True)
     cache[str(initial)] = initial
@@ -108,7 +111,7 @@ def gengraph(damping):
     while len(wonqueue) > 0:
         item = wonqueue.popleft()
         for parent in item.parents:
-            allarelost = True
+            allarelost = True6.7710394
             veteranparent = parent.won is not None
             for child in parent.children:
                 if child.won == parent.turn:
@@ -153,13 +156,52 @@ def gengraph(damping):
         matrixC.append(matrixCval)
         matrixA.append(matrixrow)
 
-
     A = np.array(matrixA, dtype="float")
     C = np.array(matrixC, dtype="float")
     sol = np.linalg.solve(A, C)
+    oldsol = sol
     for (i, position) in enumerate(positionlist):
         position.blunderscore = sol[i][0]
+    if skip:
+        newpositionlist = deepcopy(positionlist)
+        for position in newpositionlist:
+            if position.turn == False:
+                maxblunder = 0
+                for child in position.children:
+                    maxblunder = max(maxblunder, child.blunderscore)
+                position.children = [
+                    x for x in position.children if x.blunderscore == maxblunder
+                ]
+                if len(position.children) != 1 and position.won != False:
+                    print("ALARM")
+        matrixA = []
+        matrixC = []
+        for position in newpositionlist:
+            matrixrow = [0] * (len(newpositionlist))
+            matrixrow[newpositionlist.index(position)] = 1
+            matrixCval = [0]
+            if position.won == False:
+                matrixCval[0] = 1
+            else:
+                children = position.children
+                childind = []
+                for child in children:
+                    childind.append(newpositionlist.index(child))
+
+                for ind in childind:
+                    matrixrow[ind] = -1 / len(position.children) * damping
+                matrixCval = [0]
+            matrixC.append(matrixCval)
+            matrixA.append(matrixrow)
+
+        A = np.array(matrixA, dtype="float")
+        C = np.array(matrixC, dtype="float")
+        sol = np.linalg.solve(A, C)
+        for (i, position) in enumerate(newpositionlist):
+            cache[str(position)].blunderscore = sol[i][0]
     return cache
+
+
 # player class - given a position, makes a move
 class ComputerPlayer:
     def move(self, position):
@@ -203,7 +245,11 @@ class RandomPlayer:
 
 class HumanPlayer:
     def move(self, position):
-        return random.choice(list(x for x in position.children if (x.distance > 6 or x.won != False)))
+        return random.choice(
+            list(x for x in position.children if (x.distance > 6 or x.won != False))
+        )
+
+
 def runtests(turn, iters, cache):
     resarr = []
     initial = cache["11112"] if not turn else cache["11111"]
@@ -237,7 +283,6 @@ def runtests(turn, iters, cache):
     print(mean(counters))
     resarr.append(mean(counters))
 
-
     counters = []
     for i in range(iters):
         pos = initial
@@ -251,7 +296,6 @@ def runtests(turn, iters, cache):
         counters.append(counter)
     print(mean(counters))
     resarr.append(mean(counters))
-
 
     counters = []
     for i in range(iters):
@@ -267,16 +311,18 @@ def runtests(turn, iters, cache):
     print(mean(counters))
     resarr.append(mean(counters))
     return resarr
+
+
 resarff = []
 for test in [0.1, 0.25, 0.5, 0.75, 0.85, 0.95, 0.99, 0.999]:
     print(test)
     cache = gengraph(test)
-    resarr1 = runtests(0, 1000000, cache)
+    resarr1 = runtests(0, 10000000, cache)
     cache = gengraph(test)
-    resarr2 = runtests(1, 1000000, cache)
+    resarr2 = runtests(1, 10000000, cache)
     resarrf = []
     for i in range(4):
-        resarrf.append(resarr1[i]/2+resarr2[i]/2)
+        resarrf.append(resarr1[i] / 2 + resarr2[i] / 2)
     resarff.append(resarrf)
     print(test)
 
@@ -285,7 +331,7 @@ for (i, r) in enumerate(resarff):
 
 pos = cache["11112"]
 
-#currentpos = initial
+# currentpos = initial
 while False:
     print("Available moves are:")
     for ind, child in enumerate(currentpos.children):
