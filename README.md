@@ -1,5 +1,5 @@
 # Chopsticks
-Cool little project I made for the finger game chopsticks
+Cool little project I made for the finger game chopsticks. If you want to see self-play results for the effectiveness of my method, run chopsticksolvedia.py. Otherwise, solverGraphical should provide a decent user experience, though do note that it doesn't use my PageRank based algorithm.
 
 You play first
 

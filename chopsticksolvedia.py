@@ -96,6 +96,8 @@ class Position:
         string += "1" if self.turn else "2"
         return string
 
+
+
 setrecursionlimit(1000000)
 def gengraph(damping, skip=True):
     cache = {}
